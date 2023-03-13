@@ -6,13 +6,31 @@ import (
 	"github.com/flily/monkey-lang/token"
 )
 
+type testToken struct {
+	Type    token.TokenType
+	Literal string
+}
+
+func checkLexerTokenList(t *testing.T, code string, tokens []testToken) {
+	l := New(code)
+	for i, expected := range tokens {
+		tok := l.NextToken()
+		if tok.Type != expected.Type {
+			t.Fatalf("tests[%d] - tokentype wrong. expected=%q, got=%q",
+				i, expected.Type, tok.Type)
+		}
+
+		if tok.Literal != expected.Literal {
+			t.Fatalf("tests[%d] - literal wrong. expected=%q, got=%q",
+				i, expected.Literal, tok.Literal)
+		}
+	}
+}
+
 func TestNextToken1(t *testing.T) {
 	input := `=+(){},;`
 
-	tests := []struct {
-		expectedType    token.TokenType
-		expectedLiteral string
-	}{
+	tests := []testToken{
 		{token.ASSIGN, "="},
 		{token.PLUS, "+"},
 		{token.LPAREN, "("},
@@ -24,20 +42,7 @@ func TestNextToken1(t *testing.T) {
 		{token.EOF, ""},
 	}
 
-	l := New(input)
-	for i, tt := range tests {
-		tok := l.NextToken()
-
-		if tok.Type != tt.expectedType {
-			t.Fatalf("tests[%d] - tokentype wrong. expected=%q, got=%q",
-				i, tt.expectedType, tok.Type)
-		}
-
-		if tok.Literal != tt.expectedLiteral {
-			t.Fatalf("tests[%d] - literal wrong. expected=%q, got=%q",
-				i, tt.expectedLiteral, tok.Literal)
-		}
-	}
+	checkLexerTokenList(t, input, tests)
 }
 
 func TestNextToken2(t *testing.T) {
@@ -46,12 +51,10 @@ func TestNextToken2(t *testing.T) {
 		let add = fn(x, y) {
 			x + y;
 			};
-		let result = add(five, ten);`
+		let result = add(five, ten);
+	`
 
-	tests := []struct {
-		expectedType    token.TokenType
-		expectedLiteral string
-	}{
+	tests := []testToken{
 		{token.LET, "let"},
 		{token.IDENT, "five"},
 		{token.ASSIGN, "="},
@@ -91,18 +94,5 @@ func TestNextToken2(t *testing.T) {
 		{token.EOF, ""},
 	}
 
-	l := New(input)
-	for i, tt := range tests {
-		tok := l.NextToken()
-
-		if tok.Type != tt.expectedType {
-			t.Fatalf("tests[%d] - tokentype wrong. expected=%q, got=%q",
-				i, tt.expectedType, tok.Type)
-		}
-
-		if tok.Literal != tt.expectedLiteral {
-			t.Fatalf("tests[%d] - literal wrong. expected=%q, got=%q",
-				i, tt.expectedLiteral, tok.Literal)
-		}
-	}
+	checkLexerTokenList(t, input, tests)
 }
