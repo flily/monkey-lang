@@ -7,6 +7,7 @@ import (
 
 	"github.com/flily/monkey-lang/evaluator"
 	"github.com/flily/monkey-lang/lexer"
+	"github.com/flily/monkey-lang/object"
 	"github.com/flily/monkey-lang/parser"
 )
 
@@ -37,6 +38,7 @@ func printParserErrors(out io.Writer, errors []string) {
 
 func Start(in io.Reader, out io.Writer) {
 	scanner := bufio.NewScanner(in)
+	env := object.NewEnvironment()
 
 	for {
 		fmt.Fprint(out, PROMPT)
@@ -55,7 +57,7 @@ func Start(in io.Reader, out io.Writer) {
 			continue
 		}
 
-		evaluated := evaluator.Eval(program)
+		evaluated := evaluator.Eval(program, env)
 		if evaluated != nil {
 			_, _ = io.WriteString(out, evaluated.Inspect())
 			_, _ = io.WriteString(out, "\n")
