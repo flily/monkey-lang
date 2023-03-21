@@ -1,6 +1,8 @@
 package compiler
 
 import (
+	"fmt"
+
 	"github.com/flily/monkey-lang/ast"
 	"github.com/flily/monkey-lang/code"
 	"github.com/flily/monkey-lang/object"
@@ -48,6 +50,14 @@ func (c *Compiler) Compile(node ast.Node) error {
 		err = c.Compile(node.Right)
 		if err != nil {
 			return err
+		}
+
+		switch node.Operator {
+		case "+":
+			c.emit(code.OpAdd)
+
+		default:
+			return fmt.Errorf("unknown operator: %s", node.Operator)
 		}
 
 	case *ast.IntegerLiteral:
