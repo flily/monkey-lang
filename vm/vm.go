@@ -11,6 +11,7 @@ import (
 const StackSize = 2048
 
 var (
+	Null  = &object.Null{}
 	True  = &object.Boolean{Value: true}
 	False = &object.Boolean{Value: false}
 )
@@ -27,6 +28,9 @@ func isTruthy(obj object.Object) bool {
 	switch obj := obj.(type) {
 	case *object.Boolean:
 		return obj.Value
+
+	case *object.Null:
+		return false
 
 	default:
 		return true
@@ -120,6 +124,12 @@ func (vm *VM) Run() error {
 			condition := vm.pop()
 			if !isTruthy(condition) {
 				ip = pos - 1
+			}
+
+		case code.OpNull:
+			err := vm.push(Null)
+			if err != nil {
+				return err
 			}
 		}
 	}
@@ -232,6 +242,9 @@ func (vm *VM) executeBangOperator() error {
 		return vm.push(False)
 
 	case False:
+		return vm.push(True)
+
+	case Null:
 		return vm.push(True)
 
 	default:
