@@ -6,12 +6,12 @@ import (
 
 func TestDefine(t *testing.T) {
 	expected := map[string]Symbol{
-		"a": Symbol{
+		"a": {
 			Name:  "a",
 			Scope: GlobalScope,
 			Index: 0,
 		},
-		"b": Symbol{
+		"b": {
 			Name:  "b",
 			Scope: GlobalScope,
 			Index: 1,
