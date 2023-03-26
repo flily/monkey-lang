@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/flily/monkey-lang/ast"
+	"github.com/flily/monkey-lang/code"
 )
 
 type ObjectType string
@@ -28,6 +29,9 @@ const (
 	BUILTIN_OBJ      = "BUILTIN"
 	ARRAY_OBJ        = "ARRAY"
 	HASH_OBJ         = "HASH"
+
+	// introduced in WACIG chapter 7
+	COMPILED_FUNCTION_OBJ = "COMPILED_FUNCTION"
 )
 
 type Object interface {
@@ -231,4 +235,16 @@ func (h *Hash) Inspect() string {
 	out.WriteString("}")
 
 	return out.String()
+}
+
+type CompiledFunction struct {
+	Instructions code.Instructions
+}
+
+func (cf *CompiledFunction) Type() ObjectType {
+	return COMPILED_FUNCTION_OBJ
+}
+
+func (cf *CompiledFunction) Inspect() string {
+	return fmt.Sprintf("CompiledFunction[%p]", cf)
 }
