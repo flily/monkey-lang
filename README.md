@@ -13,3 +13,9 @@ monkey-lang
 Implement of monkey language by Go, designed by Thorsten Ball in books Writing An Interpreter in Go and Writing An Compiler in Go.
 
 Compatibility test run on Go versions from 1.12 to 1.20.
+
+
+Unknown bugs
+-------------
+
+Monkey-lang has bugs, by original design. Bugs in [BUGS](BUGS.md) are reproduced in offical final work in both WAIIG and WACIG.
