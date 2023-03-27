@@ -279,6 +279,10 @@ func (vm *VM) Run() error {
 			_ = code.ReadUint8(ins[ip+3:])
 			vm.currentFrame().ip += 3
 
+			err := vm.pushClosure(int(constIndex))
+			if err != nil {
+				return err
+			}
 		}
 	}
 
