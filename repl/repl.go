@@ -101,7 +101,10 @@ func StartCompiler(in io.Reader, out io.Writer) {
 			continue
 		}
 
-		machine := vm.NewWithGlobalsStore(comp.Bytecode(), globals)
+		bytecode := comp.Bytecode()
+		constants = bytecode.Constants
+		
+		machine := vm.NewWithGlobalsStore(bytecode, globals)
 		err = machine.Run()
 		if err != nil {
 			fmt.Fprintf(out, "Woops! Executing bytecode failed:\n %s\n", err)
