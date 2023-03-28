@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"io"
+	"io/ioutil"
 	"os"
 )
 
@@ -41,7 +42,7 @@ func (s *InteractiveScanner) readFile() (string, error) {
 	}
 
 	defer fd.Close()
-	content, err := io.ReadAll(fd)
+	content, err := ioutil.ReadAll(fd)
 	if err != nil {
 		return "", err
 	}
