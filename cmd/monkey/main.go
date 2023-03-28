@@ -211,6 +211,10 @@ func main() {
 
 	conf.Interactive = *modInteractive
 
+	if len(args) <= 0 {
+		fmt.Printf("%s\n", getBanner())
+	}
+
 	switch *engine {
 	case "vm":
 		conf.StartEvaluator(args)
