@@ -2,9 +2,13 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
+
+	"github.com/flily/monkey-lang/compiler"
+	"github.com/flily/monkey-lang/object"
 )
 
 type InteractiveScanner struct {
@@ -81,6 +85,10 @@ func (s *InteractiveScanner) WriteString(str string) {
 	_, _ = io.WriteString(s.Out, str)
 }
 
+func (s *InteractiveScanner) Printf(format string, args ...interface{}) {
+	s.WriteString(fmt.Sprintf(format, args...))
+}
+
 func (s *InteractiveScanner) WriteLines(lines []string) {
 	for _, line := range lines {
 		s.WriteString(line + "\n")
@@ -89,4 +97,21 @@ func (s *InteractiveScanner) WriteLines(lines []string) {
 
 func (s *InteractiveScanner) AddFiles(files []string) {
 	s.files = append(s.files, files...)
+}
+
+func (s *InteractiveScanner) DumpBytecode(bytecode *compiler.Bytecode) {
+	s.WriteLines([]string{
+		"-------- CODE --------",
+		bytecode.Instructions.String(),
+		"-------- DATA --------",
+	})
+	for i, data := range bytecode.Constants {
+		switch data := data.(type) {
+		case *object.CompiledFunction:
+			s.Printf("FN %d:\n%s", i, data.Instructions.String())
+
+		default:
+			s.Printf("OBJECT %d: %s\n", i, data.Inspect())
+		}
+	}
 }

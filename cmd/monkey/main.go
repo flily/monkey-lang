@@ -82,19 +82,19 @@ func newCompilerContext() *compilerContext {
 	return c
 }
 
-func runWithCompiler(code string, ctx *compilerContext) (object.Object, []string) {
+func runWithCompiler(code string, ctx *compilerContext) (object.Object, *compiler.Bytecode, []string) {
 	l := lexer.New(code)
 	p := parser.New(l)
 
 	program := p.ParseProgram()
 	if len(p.Errors()) != 0 {
-		return nil, p.Errors()
+		return nil, nil, p.Errors()
 	}
 
 	comp := compiler.NewWithState(ctx.symbolTable, ctx.constants)
 	err := comp.Compile(program)
 	if err != nil {
-		return nil, []string{err.Error()}
+		return nil, nil, []string{err.Error()}
 	}
 
 	bytecode := comp.Bytecode()
@@ -103,11 +103,11 @@ func runWithCompiler(code string, ctx *compilerContext) (object.Object, []string
 	machine := vm.NewWithGlobalsStore(bytecode, ctx.globals)
 	err = machine.Run()
 	if err != nil {
-		return nil, []string{err.Error()}
+		return nil, bytecode, []string{err.Error()}
 	}
 
 	result := machine.LastPoppedStackElem()
-	return result, nil
+	return result, bytecode, nil
 }
 
 type MonkeyConfigure struct {
@@ -116,6 +116,7 @@ type MonkeyConfigure struct {
 	Prompt string
 
 	Interactive bool
+	Compilation bool
 }
 
 func NewMonkeyConfigure() *MonkeyConfigure {
@@ -182,7 +183,7 @@ func (c *MonkeyConfigure) StartCompiler(files []string) {
 			break
 		}
 
-		result, errMessages := runWithCompiler(line, ctx)
+		result, bytecode, errMessages := runWithCompiler(line, ctx)
 		if len(errMessages) > 0 {
 			scanner.WriteLines([]string{
 				MONKEY_FACE,
@@ -193,6 +194,10 @@ func (c *MonkeyConfigure) StartCompiler(files []string) {
 			continue
 		}
 
+		if c.Compilation {
+			scanner.DumpBytecode(bytecode)
+		}
+
 		if result != nil {
 			scanner.WriteString(result.Inspect())
 			scanner.WriteString("\n")
@@ -201,15 +206,24 @@ func (c *MonkeyConfigure) StartCompiler(files []string) {
 }
 
 func main() {
+	modCompile := flag.Bool("c", false, "compiler codes and show instructions")
 	modInteractive := flag.Bool("i", false, "run as interactive mode, enabled when no file is provided")
-	engine := flag.String("e", "vm", "engine to execute monkey scripts, `vm` or `eval`, default is `vm`")
+	engine := flag.String("e", "vm", "engine to execute monkey scripts, `vm' or `eval', default is `vm`")
 
 	flag.Parse()
 	args := flag.Args()
 
 	conf := NewMonkeyConfigure()
-
 	conf.Interactive = *modInteractive
+
+	if *modCompile {
+		if *engine == "eval" {
+			fmt.Printf("ERROR engine `eval' CAN NOT compile")
+			return
+		}
+
+		conf.Compilation = *modCompile
+	}
 
 	if len(args) <= 0 {
 		fmt.Printf("%s\n", getBanner())
@@ -217,10 +231,10 @@ func main() {
 
 	switch *engine {
 	case "vm":
-		conf.StartEvaluator(args)
+		conf.StartCompiler(args)
 
 	case "eval":
-		conf.StartCompiler(args)
+		conf.StartEvaluator(args)
 
 	default:
 		fmt.Printf("unknown engine: %s\n", *engine)
