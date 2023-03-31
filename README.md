@@ -25,7 +25,7 @@ Release branches:
   + `v0`, development releases of each chapter in book Writing An Interpreter in Go.
     The final work is released as `v1.0.0` and in `v1` branch.
   + `v1`, development releases of each chapter in book Writing An Compiler in Go.
-    The final work is released as `v2.0.0` and in `v2` branch.
+    The final work is released as `v1.10.1` and in `v1` branch.
   + `v2`, final work of monkey-lang, followed the steps in books.
     Add full script support, and ONLY bug fixes will be committed to this branch.
   + `v3`, new features or implements for monkey-lang, BUT fully compatible to offical implement.
