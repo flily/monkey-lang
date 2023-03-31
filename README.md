@@ -15,6 +15,22 @@ Implement of monkey language by Go, designed by Thorsten Ball in books Writing A
 Compatibility test run on Go versions from 1.12 to 1.20.
 
 
+Branches
+---------
+
+Lastest finished features are committed to `main` branch as development branch.
+`main` branch may not be stable, but it must be compilable and the new feature must be finished.
+
+Release branches:
+  + `v0`, development releases of each chapter in book Writing An Interpreter in Go.
+    The final work is released as `v1.0.0` and in `v1` branch.
+  + `v1`, development releases of each chapter in book Writing An Compiler in Go.
+    The final work is released as `v2.0.0` and in `v2` branch.
+  + `v2`, final work of monkey-lang, followed the steps in books.
+    Add full script support, and ONLY bug fixes will be committed to this branch.
+  + `v3`, new features or implements for monkey-lang, BUT fully compatible to offical implement.
+
+
 Unknown bugs
 -------------
 
