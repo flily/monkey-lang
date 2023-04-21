@@ -208,7 +208,7 @@ func (c *MonkeyConfigure) StartCompiler(files []string) {
 func main() {
 	modCompile := flag.Bool("c", false, "compiler codes and show instructions")
 	modInteractive := flag.Bool("i", false, "run as interactive mode, enabled when no file is provided")
-	engine := flag.String("e", "vm", "engine to execute monkey scripts, `vm' or `eval', default is `vm`")
+	engine := flag.String("e", "vm", "engine to execute monkey scripts, 'vm' or 'eval', default is 'vm'")
 
 	flag.Parse()
 	args := flag.Args()
